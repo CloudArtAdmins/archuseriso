@@ -316,6 +316,7 @@ hexchat
 signal-desktop
 keybase-gui
 flatpak
+steam
 
 # Added language fonts
 ttf-liberation
