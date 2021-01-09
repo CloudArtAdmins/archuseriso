@@ -82,6 +82,6 @@ gpasswd -a live autologin
 [[ -e /etc/systemd/system/sockets.target.wants/systemd-networkd.socket ]] && rm /etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 
 # flatpak additions
-flatpak --system --verbose remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak --system --verbose --assumeyes --noninteractive install flathub com.valvesoftware.Steam
+flatpak --system remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak --system --assumeyes --noninteractive install flathub com.valvesoftware.Steam
 
