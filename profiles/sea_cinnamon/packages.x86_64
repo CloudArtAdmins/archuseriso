@@ -290,10 +290,11 @@ zip
 zsh-autosuggestions
 
 # Seabass Additions
-steam
+zsh-syntax-highlighting
 exa
 bat
 fd
+fzf
 ripgrep
 kitty
 base-devel
@@ -314,3 +315,18 @@ deluge
 hexchat
 signal-desktop
 keybase-gui
+flatpak
+
+# Added language fonts
+ttf-liberation
+wqy-zenhei
+adobe-source-han-sans-cn-fonts
+adobe-source-han-serif-cn-fonts
+adobe-source-han-sans-hk-fonts
+adobe-source-han-sans-tw-fonts
+adobe-source-han-serif-tw-fonts
+adobe-source-han-sans-jp-fonts
+adobe-source-han-serif-jp-fonts
+adobe-source-han-sans-kr-fonts
+adobe-source-han-serif-kr-fonts
+
