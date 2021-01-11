@@ -317,6 +317,7 @@ signal-desktop
 keybase-gui
 flatpak
 steam
+neovim
 
 # Added language fonts
 ttf-liberation
