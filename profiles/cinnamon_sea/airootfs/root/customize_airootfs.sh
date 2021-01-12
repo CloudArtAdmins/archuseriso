@@ -81,3 +81,18 @@ gpasswd -a live autologin
 [[ -e /etc/systemd/system/network-online.target.wants/systemd-networkd-wait-online.service ]] && rm /etc/systemd/system/network-online.target.wants/systemd-networkd-wait-online.service
 [[ -e /etc/systemd/system/sockets.target.wants/systemd-networkd.socket ]] && rm /etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 
+# extra zsh settings for live user
+echo "
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+source /usr/share/fzf/completion.zsh
+source /usr/share/fzf/key-bindings.zsh
+zstyle ':completion:*:*:*:default' menu yes select search #add interactive and searchable menu to tab completions
+bindkey \"^[[3~\" delete-char # DELETE key removes character in front (opposite of backspace)
+bindkey \^U backward-kill-line # CTRL + U delets all to left        
+bindkey \"^[[1;5C\" forward-word # CTRL + right arrow key jump
+bindkey \"^[[1;5D\" backward-word # CTRL + left arrow key jump
+bindkey '^[[Z' autosuggest-accept # Accept suggestion from zsh-autosuggest
+bindkey '^ ' autosuggest-execute # Execute suggestion from zsh-autosuggest
+bindkey \"\$terminfo[kcuu1]\" history-substring-search-up # Up arrow key searches for similar commands to what was typed
+bindkey \"\$terminfo[kcud1]\" history-substring-search-down # Down arrow key searches for similar commands to what was typed" >> /home/live/.zshrc

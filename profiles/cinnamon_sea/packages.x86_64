@@ -291,6 +291,7 @@ zsh-autosuggestions
 
 # Seabass Additions
 zsh-syntax-highlighting
+zsh-history-substring-search
 exa
 bat
 fd
