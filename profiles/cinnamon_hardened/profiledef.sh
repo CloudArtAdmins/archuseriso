@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="seabass-cinnamon"
-iso_label="Sea-AUIC"
+iso_name="seabass-cinnamon-hardened"
+iso_label="Hard-Sea-AUIC"
 iso_publisher="Seabass_Chan"
 desktop="Cinnamon"
 iso_application="Archuseriso ${desktop} Live/Rescue medium"
