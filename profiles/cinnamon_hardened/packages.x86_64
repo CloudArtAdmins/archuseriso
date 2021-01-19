@@ -292,6 +292,7 @@ zsh-autosuggestions
 # Seabass Additions
 zsh-syntax-highlighting
 zsh-history-substring-search
+okular
 exa
 bat
 fd
@@ -302,9 +303,6 @@ base-devel
 iotop
 bmon
 htop
-podman
-buildah
-discord
 keepassxc
 veracrypt
 apparmor
@@ -316,11 +314,8 @@ deluge
 hexchat
 signal-desktop
 keybase-gui
-flatpak
-steam
-neovim
-okular
 clamav
+flatpak
 
 # Added language fonts
 ttf-liberation
