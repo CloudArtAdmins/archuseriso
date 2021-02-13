@@ -63,9 +63,7 @@ nilfs-utils
 nmap
 ntfs-3g
 nvme-cli
-openconnect
 openssh
-openvpn
 partclone
 parted
 partimage
@@ -164,14 +162,11 @@ nemo-fileroller
 nemo-image-converter
 nemo-preview
 nemo-seahorse
-nemo-share
 networkmanager-openconnect
 networkmanager-openvpn
 networkmanager-pptp
 networkmanager-vpnc
-nss-mdns
 numlockx
-orca
 os-prober
 papirus-icon-theme
 pavucontrol
@@ -179,7 +174,6 @@ parcellite
 pulseaudio-bluetooth
 pulseaudio-zeroconf
 rygel
-samba
 seahorse
 simple-scan
 system-config-printer
@@ -236,7 +230,7 @@ cups-pdf cups-pk-helper
 #
 #abiword
 gnumeric
-#hunspell-en_US libreoffice-fresh
+hunspell-en_US libreoffice-fresh
 #hunspell-en_US libreoffice-still
 
 ### Virtualbox guest
@@ -297,9 +291,9 @@ exa
 bat
 fd
 fzf
+xz
 ripgrep
 kitty
-base-devel
 iotop
 bmon
 htop
@@ -315,7 +309,7 @@ hexchat
 signal-desktop
 keybase-gui
 clamav
-flatpak
+vlc
 
 # Added language fonts
 ttf-liberation

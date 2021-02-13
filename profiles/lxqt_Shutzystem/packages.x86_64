@@ -17,7 +17,6 @@ dhclient
 dhcpcd
 diffutils
 dmraid
-dnsmasq
 dosfstools
 edk2-shell
 efibootmgr
@@ -26,7 +25,6 @@ exfatprogs
 f2fs-tools
 fsarchiver
 gnu-netcat
-gpart
 gpm
 gptfdisk
 grml-zsh-config
@@ -44,8 +42,6 @@ linux
 linux-atm
 linux-firmware
 lsscsi
-lvm2
-lynx
 man-db
 man-pages
 mc
@@ -63,14 +59,6 @@ nilfs-utils
 nmap
 ntfs-3g
 nvme-cli
-openconnect
-openssh
-openvpn
-partclone
-parted
-partimage
-ppp
-pptpclient
 reflector
 reiserfsprogs
 rp-pppoe
@@ -78,8 +66,6 @@ rsync
 rxvt-unicode-terminfo
 sdparm
 sg3_utils
-smartmontools
-squashfs-tools
 sudo
 syslinux
 systemd-resolvconf
@@ -87,109 +73,76 @@ tcpdump
 terminus-font
 termite-terminfo
 testdisk
-tmux
-udftools
 usb_modeswitch
 usbutils
 vim
-vpnc
 wireless-regdb
 wireless_tools
 wpa_supplicant
-wvdial
 xfsprogs
-xl2tpd
 zsh
 
-# Desktop
+# Desktop 
 acpi
 acpid
-adwaita-icon-theme
-adapta-gtk-theme
 alsa-firmware
 alsa-utils
 aspell-en
 bash-completion
 binutils
-blueberry
-cinnamon
-cinnamon-translations
+bluez-tools
+bluez-utils
+breeze-gtk
+breeze-icons
 cryfs
 feh
-ffmpegthumbnailer
-file-roller
 fprintd
-gnome-calculator
-gnome-calendar
-gnome-characters
-gnome-disk-utility
-gnome-font-viewer
 gnome-keyring
-gnome-logs
-gnome-maps
-gnome-menus
-gnome-packagekit
-gnome-remote-desktop
-gnome-screenshot
-gnome-screenshot
-gnome-software-packagekit-plugin
-gnome-system-monitor
-gnome-terminal
-gnome-user-share
-gnote
+gnome-themes-extra
 gparted
-gsmartcontrol
-gst-libav
 gvfs-afc
 gvfs-google
 gvfs-gphoto2
 gvfs-mtp
 gvfs-nfs
 gvfs-smb
-hexchat
 intel-media-driver
 jre-openjdk
+kvantum-qt5
+l3afpad
+libpulse
+libstatgrab
+libsysstat
 libva-intel-driver
 libva-mesa-driver
 libva-utils
 libva-vdpau-driver
-lightdm-gtk-greeter-settings
+lm_sensors
 lsb-release
+lxqt
 mesa-demos
 mesa-vdpau
 mobile-broadband-provider-info
 modemmanager
 mousetweaks
-nemo-fileroller
-nemo-image-converter
-nemo-preview
-nemo-seahorse
-nemo-share
-networkmanager-openconnect
+network-manager-applet
 networkmanager-openvpn
-networkmanager-pptp
-networkmanager-vpnc
 nss-mdns
 numlockx
-orca
 os-prober
-papirus-icon-theme
-pavucontrol
-parcellite
+pavucontrol-qt
+picom
 pulseaudio-bluetooth
 pulseaudio-zeroconf
-rygel
-samba
-seahorse
-simple-scan
+qpdfview
+sddm
 system-config-printer
 ttf-droid
 ttf-hack
 vdpauinfo
-vino
 virtualgl
-xdg-user-dirs-gtk
-xed
+vlc
+xdg-user-dirs
 xf86-input-elographics
 xf86-input-evdev
 xf86-input-void
@@ -201,7 +154,6 @@ xf86-video-vesa
 xorg-mkfontscale
 xorg-server
 xorg-twm
-xorg-xdpyinfo
 xorg-xdriinfo
 xorg-xgamma
 xorg-xhost
@@ -213,7 +165,12 @@ xorg-xrefresh
 xorg-xsetroot
 xorg-xvinfo
 xorg-xwininfo
-xreader
+xsettingsd
+xterm
+
+### Extra packages for installation
+### * uncomment line to install package
+### * you may add new packages to the list
 
 ### Browser
 ##
@@ -236,7 +193,7 @@ cups-pdf cups-pk-helper
 #
 #abiword
 gnumeric
-#hunspell-en_US libreoffice-fresh
+hunspell-en_US libreoffice-fresh
 #hunspell-en_US libreoffice-still
 
 ### Virtualbox guest
@@ -263,13 +220,11 @@ vulkan-tools
 ### Others
 ##
 #
-byobu
 cpio
 cpupower
 dmidecode
 fakeroot
 git
-grub
 grsync
 hddtemp
 hwinfo
@@ -287,41 +242,8 @@ wget
 whois
 wireguard-tools
 zip
+unzip
 zsh-autosuggestions
-
-# Seabass Additions
-zsh-syntax-highlighting
-zsh-history-substring-search
-exa
-bat
-fd
-fzf
-ripgrep
-kitty
-base-devel
-iotop
-bmon
-htop
-podman
-buildah
-discord
-keepassxc
-veracrypt
-apparmor
-firejail
-torbrowser-launcher
-youtube-dl
-flameshot
-deluge
-hexchat
-signal-desktop
-keybase-gui
-flatpak
-steam
-neovim
-okular
-clamav
-vlc
 
 # Added language fonts
 ttf-liberation
@@ -336,3 +258,34 @@ adobe-source-han-serif-jp-fonts
 adobe-source-han-sans-kr-fonts
 adobe-source-han-serif-kr-fonts
 
+# Shutzystem Specific
+zsh-syntax-highlighting
+zsh-history-substring-search
+exa
+bat
+fd
+fzf
+ripgrep
+kitty
+base-devel
+iotop
+bmon
+htop
+keepassxc
+veracrypt
+apparmor
+firejail
+torbrowser-launcher
+youtube-dl
+flameshot
+deluge
+signal-desktop
+keybase-gui
+steam
+neovim
+okular
+clamav
+thunderbird
+pcmanfm-qt
+kate
+nextcloud-client

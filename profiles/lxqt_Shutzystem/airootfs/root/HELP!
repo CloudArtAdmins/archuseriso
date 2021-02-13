@@ -1,0 +1,55 @@
+Font size changes are generally with `CTRL +` or `CTRL -`
+
+Package (Application) Management from GUI: 
+Open the Konsole menu has "update" and "add and remove software" in the favorites (opening) tab.
+Worst case, just search either of those names.
+If you don't find what you want, look at the terminal version at the bottom.
+Most should be in the "add or remove software" thing, though.
+
+USEFUL UTILITIES
+- Word Processing Suits: Libre office Suite
+- Browsers: Brave, Tor Browser Bundle, and Firefox (all installed)
+- PDF viewer: Okular (better than libreoffice for PDFs)
+- Screenshots: Flameshot
+- Main File Viewer: pcmanfm-qt (might be named pcmanfm)
+- Text Editors: Kate
+- Terminal Text editors: Vim (if you end up in it, you type `ESC` then `:q!` + `ENTER` to leave it.)
+- Password Manager: Keepassxc
+- Antivirus: Clamav
+- Video/Music player: vlc
+- Email client: Thunderbird (doesn't look pretty, but works best)
+
+CHAT APPS: 
+- signal-desktop
+- keybase-gui
+
+YOU MAY WANT TO KNOW:
+
+- You have nextcloud-client installed. Sync folder is called "Nextcloud"
+- If you want to download a video from a webpage without visiting the site or to just keep a copy, open a terminal `youtube-dl "link-to-video"` and you will have a copy.
+- You have two terminals. Kitty is nicer, but if it ever doesn't work, try searching for xterm
+- If you want to change your background, right click the desktop and select "configure desktop".
+- If you want to change your lock screen, open the KDE menu (Equivalent of Windows Menu) and open "screen locking"
+- If you want to change your computer's color scheme, open the KDE menu and open "Global theme" or "Plasma Style".
+
+UPDATES AND INSTALLING APPS IN TERMINAL:
+NOTE: A package is an application you install on Linux
+.. and yes, Caps Matter Here.
+Search for something: 		trizen -Ss PACKAGE
+Install something: 		trizen -S PACKAGE
+Remove something: 		trizen -Rs PACKAGE
+Remv smthin and cfg files	trizen -Rns PACKAGE
+Update computer:		trizen -Syu
+
+-S   = Sync
+-Ss  = search
+-Sy  = look for new versions
+-Su  = upgrade packages
+-Syu = check for updates and upgrade
+-R   = remove
+-Rs  = Reverse sync
+-Rns = Reverse sync, including backed up files for this app (like the configuration files)
+
+You will most likely prefer to use -Rns most.
+
+
