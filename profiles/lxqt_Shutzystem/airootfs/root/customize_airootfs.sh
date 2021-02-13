@@ -61,6 +61,9 @@ sed -i 's/^#\s\(%wheel\s.*NOPASSWD\)/\1/' /etc/sudoers
 [[ -e /etc/systemd/system/network-online.target.wants/systemd-networkd-wait-online.service ]] && rm /etc/systemd/system/network-online.target.wants/systemd-networkd-wait-online.service
 [[ -e /etc/systemd/system/sockets.target.wants/systemd-networkd.socket ]] && rm /etc/systemd/system/sockets.target.wants/systemd-networkd.socket
 
+# Move new user help file
+cp /root/HELP\! /home/live/HELP\!
+
 # extra zsh settings for live user
 echo "
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -77,10 +80,12 @@ bindkey '^ ' autosuggest-execute # Execute suggestion from zsh-autosuggest
 bindkey \"\$terminfo[kcuu1]\" history-substring-search-up # Up arrow key searches for similar commands to what was typed
 bindkey \"\$terminfo[kcud1]\" history-substring-search-down # Down arrow key searches for similar commands to what was typed" >> /home/live/.zshrc
 
+# setup antivirus
 freshclam
 systemctl enable clamav-freshclam
 systemctl enable clamav-daemon
 
+# Set some firejail configs
 ln -s /usr/bin/firejail /usr/local/bin/flameshot 
 ln -s /usr/bin/firejail /usr/local/bin/vlc 
 ln -s /usr/bin/firejail /usr/local/bin/pavucontrol 
@@ -90,8 +95,4 @@ ln -s /usr/bin/firejail /usr/local/bin/okular
 ln -s /usr/bin/firejail /usr/local/bin/whois 
 ln -s /usr/bin/firejail /usr/local/bin/nslookup 
 ln -s /usr/bin/firejail /usr/local/bin/dig 
-
-makepkg -si
-cp HELP\! /home/live/Desktop/HELP\!
-cp HELP\! /home/live/HELP\!
 
