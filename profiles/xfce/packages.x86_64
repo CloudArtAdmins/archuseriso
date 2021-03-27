@@ -30,7 +30,6 @@ gpart
 gpm
 gptfdisk
 grml-zsh-config
-haveged
 hdparm
 intel-ucode
 ipw2100-fw
@@ -90,6 +89,7 @@ testdisk
 tmux
 udftools
 usb_modeswitch
+usbmuxd
 usbutils
 vim
 vpnc

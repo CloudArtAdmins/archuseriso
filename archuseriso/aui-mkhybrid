@@ -451,6 +451,7 @@ _esp() {
                 if [[ -f "${WD}/${workdir}/usbesp/${_mediumfile}" ]]; then
                     sed -i "s|%ARCHISO_LABEL%|${iso_label}|g;
                             s|%DESKTOP%|${desktop}|g;
+                            s|%IMG_LABEL%|${img_label}|g;
                             s|%ESP_LABEL%|${esp_label}|g;
                             s|%ROOT_LABEL%|${root_label}|g;
                             s|=${iso_label}|=${img_label}|g" \
@@ -518,8 +519,7 @@ _settings() {
                 _msg_info "Done!"
         fi
 
-        # haveged, initramfs
-        arch-chroot -- "${WD}/${workdir}/usbrw" systemctl enable haveged --quiet
+        # initramfs
         _msg_info "initramfs update"
         arch-chroot -- "${WD}/${workdir}/usbrw" mkinitcpio -P &> /dev/null
         _msg_info "Done!"

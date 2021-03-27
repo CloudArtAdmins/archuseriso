@@ -32,7 +32,6 @@ gnu-netcat
 gpm
 gptfdisk
 grml-zsh-config
-haveged
 hdparm
 intel-ucode
 ipw2100-fw
@@ -90,6 +89,7 @@ terminus-font
 termite-terminfo
 testdisk
 usb_modeswitch
+usbmuxd
 usbutils
 vim
 vpnc
