@@ -284,32 +284,33 @@ zip
 zsh-autosuggestions
 
 # Seabass Additions
-zsh-syntax-highlighting
-zsh-history-substring-search
-okular
-exa
-bat
-fd
-fzf
-xz
-ripgrep
-kitty
-iotop
-bmon
-htop
-keepassxc
-veracrypt
 apparmor
-firejail
-torbrowser-launcher
-youtube-dl
-flameshot
-deluge
-hexchat
-signal-desktop
-keybase-gui
+archinstall
+bat
+bmon
 clamav
+deluge
+exa
+fd
+firejail
+flameshot
+fzf
+hexchat
+htop
+iotop
+keepassxc
+keybase-gui
+kitty
+okular
+ripgrep
+signal-desktop
+torbrowser-launcher
+veracrypt
 vlc
+xz
+youtube-dl
+zsh-history-substring-search
+zsh-syntax-highlighting
 
 # Added language fonts
 ttf-liberation
