@@ -1,10 +1,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# Main
+### Archiso packages
+##
+#
 alsa-utils
 amd-ucode
 arch-install-scripts
+archinstall
 b43-fwcutter
 base
 bind-tools
@@ -13,6 +16,7 @@ broadcom-wl
 btrfs-progs
 clonezilla
 crda
+cryptsetup
 darkhttpd
 ddrescue
 dhclient
@@ -21,14 +25,17 @@ diffutils
 dmraid
 dnsmasq
 dosfstools
+e2fsprogs
 edk2-shell
 efibootmgr
 espeakup
 ethtool
 exfatprogs
 f2fs-tools
+fatresize
 fsarchiver
 gnu-netcat
+gpart
 gpm
 gptfdisk
 grml-zsh-config
@@ -37,10 +44,14 @@ intel-ucode
 ipw2100-fw
 ipw2200-fw
 irssi
+iw
 iwd
 jfsutils
 kitty-terminfo
+less
 lftp
+libfido2
+libusb-compat
 linux
 linux-atm
 linux-firmware
@@ -56,6 +67,7 @@ memtest86+
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
+modemmanager
 mtools
 nano
 nbd
@@ -71,16 +83,21 @@ openvpn
 partclone
 parted
 partimage
+pcsclite
 ppp
 pptpclient
+qemu-guest-agent
 reflector
 reiserfsprogs
 rp-pppoe
 rsync
 rxvt-unicode-terminfo
+screen
 sdparm
 sg3_utils
 smartmontools
+sof-firmware
+squashfs-tools
 sudo
 syslinux
 systemd-resolvconf
@@ -88,10 +105,14 @@ tcpdump
 terminus-font
 termite-terminfo
 testdisk
+tmux
+tpm2-tss
+udftools
 usb_modeswitch
 usbmuxd
 usbutils
 vim
+virtualbox-guest-utils-nox
 vpnc
 wireless-regdb
 wireless_tools
@@ -101,7 +122,11 @@ xfsprogs
 xl2tpd
 zsh
 
-# Extra
+### Additional packages
+##
+# Required
+refind
+# Optional
 bash-completion
 binutils
 byobu
@@ -120,7 +145,6 @@ os-prober
 pacman-contrib
 powertop
 pwgen
-refind
 strace
 tree
 wget
