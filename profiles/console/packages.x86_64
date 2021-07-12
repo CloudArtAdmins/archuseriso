@@ -86,6 +86,7 @@ partimage
 pcsclite
 ppp
 pptpclient
+pv
 qemu-guest-agent
 reflector
 reiserfsprogs
@@ -103,7 +104,6 @@ syslinux
 systemd-resolvconf
 tcpdump
 terminus-font
-termite-terminfo
 testdisk
 tmux
 tpm2-tss

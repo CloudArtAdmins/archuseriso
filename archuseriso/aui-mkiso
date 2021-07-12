@@ -51,6 +51,8 @@ sign_netboot_artifacts=""
 user_pkg_dir=""
 work_dir=""
 declare -A file_permissions=()
+# adapted from GRUB_EARLY_INITRD_LINUX_STOCK in https://git.savannah.gnu.org/cgit/grub.git/tree/util/grub-mkconfig.in
+readonly ucodes=('intel-uc.img' 'intel-ucode.img' 'amd-uc.img' 'amd-ucode.img' 'early_ucode.cpio' 'microcode.cpio')
 
 # Show an INFO message
 # $1: message string
@@ -425,15 +427,18 @@ _make_custom_airootfs() {
 
 # Install desired packages to airootfs
 _make_packages() {
+    local envvars_in_chroot=("SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}")
      _msg_info "Installing packages to '${pacstrap_dir}/'..."
 
     if [[ -n "${gpg_key}" ]]; then
         exec {ARCHISO_GNUPG_FD}<>"${work_dir}/pubkey.gpg"
-        export ARCHISO_GNUPG_FD
+        envvars_in_chroot+=("ARCHISO_GNUPG_FD=${ARCHISO_GNUPG_FD}")
     fi
     if [[ "${quiet}" = "y" ]]; then
+        env -i "${envvars_in_chroot[@]}" \
         pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}" &> /dev/null
     else
+        env -i "${envvars_in_chroot[@]}" \
         pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}"
     fi
 
@@ -535,9 +540,11 @@ _make_customize_airootfs() {
         _msg_info "Running customize_airootfs_lang.sh in '${pacstrap_dir}' chroot..."
         chmod -f -- +x "${pacstrap_dir}/root/customize_airootfs_lang.sh"
         if [[ "${quiet}" == "y" ]]; then
-            arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh" &> /dev/null
+            eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
+                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh" &> /dev/null
         else
-            arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh"
+            eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
+                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh"
         fi
         rm -- "${pacstrap_dir}/root/customize_airootfs_lang.sh"
         _msg_info "Done!"
@@ -546,9 +553,11 @@ _make_customize_airootfs() {
         _msg_info "Running customize_airootfs.sh in '${pacstrap_dir}' chroot..."
         chmod -f -- +x "${pacstrap_dir}/root/customize_airootfs.sh"
         if [[ "${quiet}" == "y" ]]; then
-            arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh" &> /dev/null
+            eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
+                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh" &> /dev/null
         else
-            arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh"
+            eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
+                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh"
         fi
         rm -- "${pacstrap_dir}/root/customize_airootfs.sh"
         _msg_info "Done!"
@@ -593,7 +602,7 @@ _make_boot_on_iso9660() {
     install -m 0644 -- "${pacstrap_dir}/boot/initramfs-"*".img" "${isofs_dir}/${install_dir}/boot/${arch}/"
     install -m 0644 -- "${pacstrap_dir}/boot/vmlinuz-"* "${isofs_dir}/${install_dir}/boot/${arch}/"
 
-    for _ucode_image in {intel-uc.img,intel-ucode.img,amd-uc.img,amd-ucode.img,early_ucode.cpio,microcode.cpio}; do
+    for _ucode_image in "${ucodes[@]}"; do
         if [[ -e "${pacstrap_dir}/boot/${_ucode_image}" ]]; then
             install -m 0644 -- "${pacstrap_dir}/boot/${_ucode_image}" "${isofs_dir}/${install_dir}/boot/"
             if [[ -e "${pacstrap_dir}/usr/share/licenses/${_ucode_image%.*}/" ]]; then
@@ -638,7 +647,7 @@ _make_bootmode_bios.syslinux.mbr() {
 
     # Add other aditional/extra files to ${install_dir}/boot/
     if [[ -e "${pacstrap_dir}/boot/memtest86+/memtest.bin" ]]; then
-        # rename for PXE: https://wiki.archlinux.org/index.php/Syslinux#Using_memtest
+        # rename for PXE: https://wiki.archlinux.org/title/Syslinux#Using_memtest
         install -m 0644 -- "${pacstrap_dir}/boot/memtest86+/memtest.bin" "${isofs_dir}/${install_dir}/boot/memtest"
         install -d -m 0755 -- "${isofs_dir}/${install_dir}/boot/licenses/memtest86+/" 
         install -m 0644 -- "${pacstrap_dir}/usr/share/licenses/common/GPL2/license.txt" \
@@ -697,16 +706,15 @@ _make_efi_dir_on_iso9660() {
 
 # Prepare kernel/initramfs on efiboot.img
 _make_boot_on_fat() {
+    local -a _all_ucode_images=()
     _msg_info "Preparing kernel and initramfs for the FAT file system..."
     mmd -i "${work_dir}/efiboot.img" \
         "::/${install_dir}" "::/${install_dir}/boot" "::/${install_dir}/boot/${arch}"
     mcopy -i "${work_dir}/efiboot.img" "${pacstrap_dir}/boot/vmlinuz-"* \
         "${pacstrap_dir}/boot/initramfs-"*".img" "::/${install_dir}/boot/${arch}/"
-    for _ucode_image in \
-        "${pacstrap_dir}/boot/"{intel-uc.img,intel-ucode.img,amd-uc.img,amd-ucode.img,early_ucode.cpio,microcode.cpio}
-    do
-        if [[ -e "${_ucode_image}" ]]; then
-            _all_ucode_images+=("${_ucode_image}")
+    for _ucode_image in "${ucodes[@]}"; do
+        if [[ -e "${pacstrap_dir}/boot/${_ucode_image}" ]]; then
+            _all_ucode_images+=("${pacstrap_dir}/boot/${_ucode_image}")
         fi
     done
     if (( ${#_all_ucode_images[@]} )); then
@@ -717,9 +725,15 @@ _make_boot_on_fat() {
 
 # Prepare efiboot.img::/EFI for EFI boot mode
 _make_bootmode_uefi-x64.systemd-boot.esp() {
-    local _efiboot_imgsize="0"
+    local _file _efiboot_imgsize="0"
+    local _available_ucodes=()
     _msg_info "Setting up systemd-boot for UEFI booting..."
 
+    for _file in "${ucodes[@]}"; do
+        if [[ -e "${pacstrap_dir}/boot/${_file}" ]]; then
+            _available_ucodes+=("${pacstrap_dir}/boot/${_file}")
+        fi
+    done
     # the required image size in KiB (rounded up to the next full MiB with an additional MiB for reserved sectors)
     _efiboot_imgsize="$(du -bc \
         "${pacstrap_dir}/usr/lib/systemd/boot/efi/systemd-bootx64.efi" \
@@ -727,7 +741,7 @@ _make_bootmode_uefi-x64.systemd-boot.esp() {
         "${profile}/efiboot/" \
         "${pacstrap_dir}/boot/vmlinuz-"* \
         "${pacstrap_dir}/boot/initramfs-"*".img" \
-        "${pacstrap_dir}/boot/"{intel-uc.img,intel-ucode.img,amd-uc.img,amd-ucode.img,early_ucode.cpio,microcode.cpio} \
+        "${_available_ucodes[@]}" \
         "${pacstrap_dir}/usr/share/refind" \
         2>/dev/null | awk 'function ceil(x){return int(x)+(x>int(x))}
                            function byte_to_kib(x){return x/1024}
@@ -977,9 +991,15 @@ _export_netboot_artifacts() {
 # sign build artifacts for netboot
 _sign_netboot_artifacts() {
     local _file _dir
+    local _files_to_sign=()
     _msg_info "Signing netboot artifacts..."
-    _dir="${isofs_dir}/${install_dir}/"
-    for _file in "${_dir}/boot/"*ucode.img "${_dir}/boot/${arch}/vmlinuz-"* "${_dir}/boot/${arch}/initramfs-"*.img; do
+    _dir="${isofs_dir}/${install_dir}/boot/"
+    for _file in "${ucodes[@]}"; do
+        if [[ -e "${_dir}${_file}" ]]; then
+            _files_to_sign+=("${_dir}${_file}")
+        fi
+    done
+    for _file in "${_files_to_sign[@]}" "${_dir}${arch}/vmlinuz-"* "${_dir}${arch}/initramfs-"*.img; do
         openssl cms \
             -sign \
             -binary \
@@ -1074,7 +1094,7 @@ _add_xorrisofs_options_bios.syslinux.mbr() {
         # When GPT is used, create an additional partition in the MBR (besides 0xEE) for sectors 0–1 (MBR
         # bootstrap code area) and mark it as bootable
         # May allow booting on some systems
-        # https://wiki.archlinux.org/index.php/Partitioning#Tricking_old_BIOS_into_booting_from_GPT
+        # https://wiki.archlinux.org/title/Partitioning#Tricking_old_BIOS_into_booting_from_GPT
         '--mbr-force-bootable'
         # Move the first partition away from the start of the ISO to match the expectations of partition editors
         # May allow booting on some systems
