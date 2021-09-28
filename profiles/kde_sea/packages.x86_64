@@ -381,6 +381,8 @@ xz
 youtube-dl
 zsh-history-substring-search
 zsh-syntax-highlighting
+zsh-autosuggestions
+zsh-completions
 
 # Added language fonts
 adobe-source-han-sans-cn-fonts
