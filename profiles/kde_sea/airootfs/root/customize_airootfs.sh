@@ -5,7 +5,12 @@
 set -e -u
 
 sed -i 's/#\(en_US\.UTF-8\)/\1/' /etc/locale.gen
+sed -i 's/#\(zh_CN\.UTF-8\)/\1/' /etc/locale.gen
+sed -i 's/#\(ja_JP\.UTF-8\)/\1/' /etc/locale.gen
 locale-gen
+
+echo "LANG=zh_CN.UTF-8" >> /etc/locale.conf
+echo "LANGUAGE=en_US.UTF-8" >> /etc/locale.conf
 
 sed -i "s/#Server/Server/g" /etc/pacman.d/mirrorlist
 
@@ -51,6 +56,7 @@ ln -s /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.s
 useradd -m -G 'wheel' -s /bin/zsh live
 sed -i 's/^\(live:\)!:/\1:/' /etc/shadow
 sed -i 's/^#\s\(%wheel\s.*NOPASSWD\)/\1/' /etc/sudoers
+cp /root/HELP\! /home/live/
 
 # disable systemd-networkd.service
 # we have NetworkManager for managing network interfaces
