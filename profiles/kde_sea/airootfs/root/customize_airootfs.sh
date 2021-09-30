@@ -9,8 +9,12 @@ sed -i 's/#\(zh_CN\.UTF-8\)/\1/' /etc/locale.gen
 sed -i 's/#\(ja_JP\.UTF-8\)/\1/' /etc/locale.gen
 locale-gen
 
-echo "LANG=zh_CN.UTF-8" >> /etc/locale.conf
-echo "LANGUAGE=en_US.UTF-8" >> /etc/locale.conf
+echo "LANG=zh_CN.UTF-8" > /etc/locale.conf
+echo "LANGUAGE=zh_CN.UTF-8" >> /etc/locale.conf
+#echo "LANG=ja_JP.UTF-8" > /etc/locale.conf
+#echo "LANGUAGE=ja_JP.UTF-8" >> /etc/locale.conf
+#echo "LANG=en_US.UTF-8" > /etc/locale.conf
+#echo "LANGUAGE=en_US.UTF-8" >> /etc/locale.conf
 
 sed -i "s/#Server/Server/g" /etc/pacman.d/mirrorlist
 
@@ -56,7 +60,11 @@ ln -s /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.s
 useradd -m -G 'wheel' -s /bin/zsh live
 sed -i 's/^\(live:\)!:/\1:/' /etc/shadow
 sed -i 's/^#\s\(%wheel\s.*NOPASSWD\)/\1/' /etc/sudoers
+# * add extra config files
 cp /root/HELP\! /home/live/
+mkdir /home/live/.config/
+cp /root/.config/plasma-localerc /home/live/.config/
+chown -R live:live /home/live/.config/
 
 # disable systemd-networkd.service
 # we have NetworkManager for managing network interfaces

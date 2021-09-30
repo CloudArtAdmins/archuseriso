@@ -400,7 +400,7 @@ wqy-zenhei
 # Adding languages
 fcitx5-im
 fcitx5-chewing
-fcitx5-chinese-addons
-fcitx5-anthy
-fcitx5-moze
+fcitx5-mozc
 fcitx5-skk
+fcitx5-chinese-addons
+ibus
