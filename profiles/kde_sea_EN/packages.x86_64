@@ -384,6 +384,12 @@ zsh-syntax-highlighting
 zsh-autosuggestions
 zsh-completions
 
+# Syncplay 
+syncplay
+pyside2 
+python-certifi
+python-service-identity
+
 # Added language fonts
 adobe-source-han-sans-cn-fonts
 adobe-source-han-sans-hk-fonts
