@@ -7,17 +7,17 @@ arch-install-scripts
 archinstall
 b43-fwcutter
 base
-bind-tools
+bind
 broadcom-wl
 btrfs-progs
 clonezilla
-crda
 cryptsetup
 darkhttpd
 ddrescue
 dhclient
 dhcpcd
 diffutils
+dmidecode
 dmraid
 dnsmasq
 dosfstools
@@ -36,6 +36,7 @@ gptfdisk
 grml-zsh-config
 grub
 hdparm
+hyperv
 intel-ucode
 ipw2100-fw
 ipw2200-fw
@@ -73,6 +74,8 @@ nilfs-utils
 nmap
 ntfs-3g
 nvme-cli
+open-iscsi
+open-vm-tools
 openconnect
 openssh
 openvpn
@@ -259,7 +262,6 @@ vulkan-tools
 byobu
 cpio
 cpupower
-dmidecode
 fakeroot
 git
 grsync
