@@ -16,19 +16,9 @@ sed -i '/^hosts:/ {
         s/\(resolve\)/mdns_minimal \[NOTFOUND=return\] \1/
         s/\(dns\)$/\1 wins/ }' /etc/nsswitch.conf
 
-# Nvidia driver setup
-# either nvidia setup
-# either optimus setup (default settings should work)
-# either no setup
-if grep -q 'nvidia' /version; then
-    # Nvidia settings
+# Optimus setup 
+if grep -q 'optimus' /version; then
     sed -i 's|^#\(display-setup-script=\)$|\1/etc/lightdm/display_setup.sh|' /etc/lightdm/lightdm.conf
-elif grep -q 'optimus' /version; then
-    # Optimus settings
-    rm /etc/lightdm/display_setup.sh
-else
-    # No settings
-    rm /etc/lightdm/display_setup.sh /etc/modprobe.d/nvidia-drm.conf
 fi
 
 # Lightdm display-manager
@@ -42,14 +32,12 @@ sed -i 's/^#\(background=\)$/\1#232627/
         s/^#\(icon-theme-name=\)$/\1Adwaita/' /etc/lightdm/lightdm-gtk-greeter.conf
 
 # Enable service when available
-{ [[ -e /usr/lib/systemd/system/acpid.service                ]] && systemctl enable acpid.service;
-  [[ -e /usr/lib/systemd/system/avahi-dnsconfd.service       ]] && systemctl enable avahi-dnsconfd.service;
+{ [[ -e /usr/lib/systemd/system/avahi-dnsconfd.service       ]] && systemctl enable avahi-dnsconfd.service;
   [[ -e /usr/lib/systemd/system/bluetooth.service            ]] && systemctl enable bluetooth.service;
   [[ -e /usr/lib/systemd/system/NetworkManager.service       ]] && systemctl enable NetworkManager.service;
   [[ -e /usr/lib/systemd/system/nmb.service                  ]] && systemctl enable nmb.service;
   [[ -e /usr/lib/systemd/system/cups.service                 ]] && systemctl enable cups.service;
   [[ -e /usr/lib/systemd/system/smb.service                  ]] && systemctl enable smb.service;
-  [[ -e /usr/lib/systemd/system/systemd-timesyncd.service    ]] && systemctl enable systemd-timesyncd.service;
   [[ -e /usr/lib/systemd/system/winbind.service              ]] && systemctl enable winbind.service;
 } > /dev/null 2>&1
 

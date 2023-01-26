@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 
 iso_name="aui-i3"
-iso_label="AUI3"
+iso_label="AUII3"
 iso_publisher=""
 desktop="i3"
 iso_application="Archuseriso ${desktop} Live/Rescue medium"
@@ -10,8 +10,11 @@ iso_version=""
 install_dir="arch"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'
-           'uefi-ia32.grub.esp' 'uefi-x64.systemd-boot.esp'
-           'uefi-ia32.grub.eltorito' 'uefi-x64.systemd-boot.eltorito')
+           'uefi-ia32.grub.esp' 'uefi-x64.grub.esp'
+           'uefi-x64.refind.esp' 'uefi-x64.systemd-boot.esp'
+           'uefi-ia32.grub.eltorito' 'uefi-x64.grub.eltorito'
+           'uefi-x64.refind.eltorito' 'uefi-x64.systemd-boot.eltorito')
+x64_uefi_default_bootloader="uefi-x64.systemd-boot.esp"
 arch="x86_64"
 pacman_conf="pacman.conf"
 pacman_testing_conf="pacman-testing.conf"

@@ -38,8 +38,6 @@ grub
 hdparm
 hyperv
 intel-ucode
-ipw2100-fw
-ipw2200-fw
 irssi
 iw
 iwd
@@ -61,6 +59,7 @@ man-pages
 mc
 mdadm
 memtest86+
+memtest86+-efi
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
@@ -124,9 +123,8 @@ zsh
 
 ### Desktop packages
 ##
-# Required or recommended
+## Required or recommended
 acpi
-acpid
 alsa-firmware
 aspell-en
 blueman
@@ -140,7 +138,7 @@ gvfs-afc
 gvfs-mtp
 gvfs-smb
 intel-media-driver
-libcanberra-pulse
+libcanberra
 libva-intel-driver
 libva-mesa-driver
 libva-utils
@@ -176,7 +174,8 @@ xorg-xdriinfo
 xorg-xinit
 xorg-xinput
 xorg-xsetroot
-# Optional
+
+## Optional
 bash-completion
 binutils
 cryfs
@@ -187,7 +186,8 @@ gvfs-gphoto2
 gvfs-nfs
 hexchat
 jre-openjdk
-mesa-demos
+#mesa-demos
+mesa-utils
 networkmanager-openconnect
 networkmanager-openvpn
 networkmanager-pptp
@@ -198,8 +198,8 @@ os-prober
 samba
 system-config-printer
 xf86-input-elographics
-xf86-input-void
-xf86-input-wacom
+#xf86-input-void
+#xf86-input-wacom
 xorg-twm
 xorg-xgamma
 xorg-xhost

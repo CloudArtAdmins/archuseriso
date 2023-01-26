@@ -38,8 +38,6 @@ grub
 hdparm
 hyperv
 intel-ucode
-ipw2100-fw
-ipw2200-fw
 irssi
 iw
 iwd
@@ -61,6 +59,7 @@ man-pages
 mc
 mdadm
 memtest86+
+memtest86+-efi
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
@@ -124,14 +123,13 @@ zsh
 
 ### Desktop packages
 ##
-# Required or recommended
+## Required or recommended
 acpi
-acpid
 alsa-firmware
 dmenu
 foot
 intel-media-driver
-libcanberra-pulse
+libcanberra
 libva-intel-driver
 libva-mesa-driver
 libva-utils
@@ -143,16 +141,21 @@ network-manager-applet
 noto-fonts
 nss-mdns
 sway
+swayidle
+swaylock
+swaybg
 ttf-droid
 ttf-hack
 vdpauinfo
 weechat
-xorg-server-xwayland
-# Optional
+xorg-xwayland
+
+## Optional
 aspell-en
 jre-openjdk
 mako
 mesa-demos
+mesa-utils
 networkmanager-openconnect
 networkmanager-openvpn
 networkmanager-pptp

@@ -38,8 +38,6 @@ grub
 hdparm
 hyperv
 intel-ucode
-ipw2100-fw
-ipw2200-fw
 irssi
 iw
 iwd
@@ -61,6 +59,7 @@ man-pages
 mc
 mdadm
 memtest86+
+memtest86+-efi
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
@@ -124,9 +123,8 @@ zsh
 
 ### Desktop packages
 ##
-# Required or recommended
+## Required or recommended
 acpi
-acpid
 alsa-firmware
 aspell-en
 bluez-tools
@@ -189,21 +187,22 @@ xorg-xdriinfo
 xorg-xinit
 xorg-xinput
 xorg-xsetroot
-# Optional
+
+## Optional
 baobab
+endeavour
 fprintd
 gedit-plugins
 gnome-calculator
-gnome-dictionary
-gnome-logs
-gnome-maps
+#gnome-dictionary
+#gnome-logs
+#gnome-maps
 gnome-music
 gnome-notes
-gnome-packagekit
+#gnome-packagekit
 gnome-photos
 gnome-remote-desktop
-gnome-software-packagekit-plugin
-gnome-todo
+#gnome-software-packagekit-plugin
 gnome-user-docs
 gnome-weather
 gsmartcontrol
@@ -212,7 +211,8 @@ gvfs-gphoto2
 gvfs-nfs
 hexchat
 jre-openjdk
-mesa-demos
+#mesa-demos
+mesa-utils
 nautilus-image-converter
 networkmanager-openconnect
 networkmanager-openvpn
@@ -226,10 +226,9 @@ seahorse-nautilus
 simple-scan
 sushi
 system-config-printer
-vino
 xf86-input-elographics
-xf86-input-void
-xf86-input-wacom
+#xf86-input-void
+#xf86-input-wacom
 xorg-twm
 xorg-xgamma
 xorg-xhost

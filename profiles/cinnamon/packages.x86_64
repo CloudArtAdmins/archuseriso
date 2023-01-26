@@ -38,8 +38,6 @@ grub
 hdparm
 hyperv
 intel-ucode
-ipw2100-fw
-ipw2200-fw
 irssi
 iw
 iwd
@@ -61,6 +59,7 @@ man-pages
 mc
 mdadm
 memtest86+
+memtest86+-efi
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
@@ -124,9 +123,8 @@ zsh
 
 ### Desktop packages
 ##
-# Required or recommended
+## Required or recommended
 acpi
-acpid
 adwaita-icon-theme
 adapta-gtk-theme
 alsa-firmware
@@ -190,13 +188,14 @@ xorg-xinit
 xorg-xinput
 xorg-xsetroot
 xreader
-# Optional
+
+## Optional
 fprintd
-gnome-logs
-gnome-maps
-gnome-packagekit
+#gnome-logs
+#gnome-maps
+#gnome-packagekit
 gnome-remote-desktop
-gnome-software-packagekit-plugin
+#gnome-software-packagekit-plugin
 gnote
 gsmartcontrol
 gvfs-google
@@ -204,7 +203,8 @@ gvfs-gphoto2
 gvfs-nfs
 hexchat
 jre-openjdk
-mesa-demos
+#mesa-demos
+mesa-utils
 nemo-image-converter
 nemo-preview
 nemo-seahorse
@@ -219,10 +219,9 @@ rygel
 seahorse
 simple-scan
 system-config-printer
-vino
 xf86-input-elographics
-xf86-input-void
-xf86-input-wacom
+#xf86-input-void
+#xf86-input-wacom
 xorg-twm
 xorg-xgamma
 xorg-xhost
