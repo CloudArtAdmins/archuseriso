@@ -457,7 +457,7 @@ _make_custom_airootfs() {
     # Set archiso cow_spacesize to 50% ram size
     sed -i 's|\(cow_spacesize=\)"256M"|\1"$(( $(awk \x27/MemTotal:/ { print $2 }\x27 /proc/meminfo) / 2 / 1024 ))M"|' \
         "${work_dir}/x86_64/airootfs/etc/initcpio/hooks/archiso"
-    # Set default copytoram to no
+    # Set copytoram default to no
     sed -i 's|\(&& copytoram=\)"auto"|\1"no"|' "${work_dir}/x86_64/airootfs/etc/initcpio/hooks/archiso"
     _msg_info "Done!"
 }
@@ -482,10 +482,11 @@ _make_packages() {
     # Unset TMPDIR to work around https://bugs.archlinux.org/task/70580
     if [[ "${quiet}" = "y" ]]; then
         env -u TMPDIR \
-        pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}" &> /dev/null
+          pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}" &> /dev/null || \
+          _msg_error 'Package installation failed! Use --verbose option for details.' 1
     else
         env -u TMPDIR \
-        pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}"
+          pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -- "${pacstrap_dir}" "${buildmode_pkg_list[@]}"
     fi
 
     if [[ -v cert_list[0] ]]; then
@@ -513,10 +514,14 @@ _make_packages_testing() {
         export ARCHISO_GNUPG_FD
     fi
 
+    # Unset TMPDIR to work around https://bugs.archlinux.org/task/70580
     if [[ "${quiet}" = "y" ]]; then
-        pacstrap -C "${work_dir}/pacman-testing.conf" -c -G -M -- "${pacstrap_dir}" "${pkg_testing_list[@]}" &> /dev/null
+        env -u TMPDIR \
+          pacstrap -C "${work_dir}/pacman-testing.conf" -c -G -M -- "${pacstrap_dir}" "${pkg_testing_list[@]}" &> /dev/null || \
+          _msg_error 'Package installation failed! Use --verbose option for details.' 1
     else
-        pacstrap -C "${work_dir}/pacman-testing.conf" -c -G -M -- "${pacstrap_dir}" "${pkg_testing_list[@]}"
+        env -u TMPDIR \
+          pacstrap -C "${work_dir}/pacman-testing.conf" -c -G -M -- "${pacstrap_dir}" "${pkg_testing_list[@]}"
     fi
 
     if [[ -n "${gpg_key}" ]]; then
@@ -548,8 +553,11 @@ _make_packages_upgrade() {
 
     # bind mount chroot-dir on itself to make it a mountpoint
     mount -o bind -- "${pacstrap_dir}" "${pacstrap_dir}"
+    # Unset TMPDIR to work around https://bugs.archlinux.org/task/70580
     if [[ "${quiet}" = "y" ]]; then
-        pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -U -- "${pacstrap_dir}" "${_pkg_upgrade[@]}" &> /dev/null
+        env -u TMPDIR \
+          pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -U -- "${pacstrap_dir}" "${_pkg_upgrade[@]}" &> /dev/null || \
+          _msg_error 'Package installation failed! Use --verbose option for details.' 1
     else
         pacstrap -C "${work_dir}/${buildmode}.pacman.conf" -c -G -M -U -- "${pacstrap_dir}" "${_pkg_upgrade[@]}"
     fi
@@ -595,7 +603,8 @@ _make_customize_airootfs() {
         chmod -f -- +x "${pacstrap_dir}/root/customize_airootfs_lang.sh"
         # Unset TMPDIR to work around https://bugs.archlinux.org/task/70580
         if [[ "${quiet}" == "y" ]]; then
-            eval -- env -u TMPDIR arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh"  &> /dev/null
+            eval -- env -u TMPDIR arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh"  &> /dev/null || \
+              _msg_error 'customize_airootfs_lang.sh failed! Use --verbose option for details.' 1
         else
             eval -- env -u TMPDIR arch-chroot "${pacstrap_dir}" "/root/customize_airootfs_lang.sh"
         fi
@@ -607,10 +616,11 @@ _make_customize_airootfs() {
         chmod -f -- +x "${pacstrap_dir}/root/customize_airootfs.sh"
         if [[ "${quiet}" == "y" ]]; then
             eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
-                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh" &> /dev/null
+              arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh" &> /dev/null || \
+              _msg_error 'customize_airootfs.sh failed! Use --verbose option for details.' 1
         else
             eval -- env -i "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
-                    arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh"
+              arch-chroot "${pacstrap_dir}" "/root/customize_airootfs.sh"
         fi
         rm -- "${pacstrap_dir}/root/customize_airootfs.sh"
         _msg_info "Done!"
@@ -625,7 +635,8 @@ _make_setup_mkinitcpio() {
     fi
 
     if [[ "${quiet}" = "y" ]]; then
-        arch-chroot "${pacstrap_dir}" mkinitcpio -P &> /dev/null
+        arch-chroot "${pacstrap_dir}" mkinitcpio -P &> /dev/null || \
+          _msg_error 'Building initramfs failed! Use --verbose option for details.' 1
     else
         arch-chroot "${pacstrap_dir}" mkinitcpio -P
     fi
@@ -657,6 +668,13 @@ _fat_image_efiboot_files_common_x64() {
 
 _fat_image_efiboot_files_grub_common() {
     local _cfg
+    local _cfg uuid_search_filename
+
+    # Create a .uuid file and place it in /.disk/ on ISO 9660 to provide a way for GRUB to search for the volume
+    uuid_search_filename="$(uuidgen --sha1 --namespace 93a870ff-8565-4cf3-a67b-f47299271a96 \
+        --name "${SOURCE_DATE_EPOCH} disk search UUID")"
+    install -d -m 0755 -- "${isofs_dir}/.disk"
+    : > "${isofs_dir}/.disk/${uuid_search_filename}.uuid"
 
     install -d -- "${work_dir}/grub"
 
@@ -665,7 +683,8 @@ _fat_image_efiboot_files_grub_common() {
         sed "s|%DESKTOP%|${desktop}|g;
              s|%ARCHISO_LABEL%|${iso_label}|g;
              s|%INSTALL_DIR%|${install_dir}|g;
-             s|%ARCH%|${arch}|g"               \
+             s|%ARCH%|${arch}|g;
+             s|%UUID_SEARCH_FILENAME%|${uuid_search_filename}|g" \
             "${_cfg}" > "${work_dir}/grub/${_cfg##*/}"
     done
 
@@ -699,11 +718,11 @@ _fat_image_efiboot_files_uefi-ia32.grub.esp() {
 
     # Create EFI binary
     # Module list from https://bugs.archlinux.org/task/71382#comment202911
-    _grubmodules=(all_video at_keyboard boot btrfs cat chain configfile echo efifwsetup efinet ext2 f2fs fat font  \
-                  gfxmenu gfxterm gzio halt hfsplus iso9660 jpeg keylayouts linux loadenv loopback lsefi lsefimmap \
-                  minicmd normal part_apple part_gpt part_msdos png read reboot regexp search search_fs_file       \
-                  search_fs_uuid search_label serial sleep tpm usb usbserial_common usbserial_ftdi                 \
-                  usbserial_pl2303 usbserial_usbdebug video xfs zstd)
+    _grubmodules=(all_video at_keyboard boot btrfs cat chain configfile echo efifwsetup efinet exfat ext2 f2fs fat \
+                  font gfxmenu gfxterm gzio halt hfsplus iso9660 jpeg keylayouts linux loadenv loopback lsefi      \
+                  lsefimmap minicmd normal ntfs ntfscomp part_apple part_gpt part_msdos png read reboot regexp     \
+                  search search_fs_file search_fs_uuid search_label serial sleep tpm udf usb usbserial_common      \
+                  usbserial_ftdi usbserial_pl2303 usbserial_usbdebug video xfs zstd)
     grub-mkstandalone -O i386-efi                     \
                       --modules="${_grubmodules[*]}"  \
                       --locales="en@quot"             \
@@ -726,11 +745,11 @@ _fat_image_efiboot_files_uefi-x64.grub.esp() {
 
     # Create EFI binary
     # Module list from https://bugs.archlinux.org/task/71382#comment202911
-    _grubmodules=(all_video at_keyboard boot btrfs cat chain configfile echo efifwsetup efinet ext2 f2fs fat font  \
-                  gfxmenu gfxterm gzio halt hfsplus iso9660 jpeg keylayouts linux loadenv loopback lsefi lsefimmap \
-                  minicmd normal part_apple part_gpt part_msdos png read reboot regexp search search_fs_file       \
-                  search_fs_uuid search_label serial sleep tpm usb usbserial_common usbserial_ftdi                 \
-                  usbserial_pl2303 usbserial_usbdebug video xfs zstd)
+    _grubmodules=(all_video at_keyboard boot btrfs cat chain configfile echo efifwsetup efinet exfat ext2 f2fs fat \
+                  font gfxmenu gfxterm gzio halt hfsplus iso9660 jpeg keylayouts linux loadenv loopback lsefi      \
+                  lsefimmap minicmd normal ntfs ntfscomp part_apple part_gpt part_msdos png read reboot regexp     \
+                  search search_fs_file search_fs_uuid search_label serial sleep tpm udf usb usbserial_common      \
+                  usbserial_ftdi usbserial_pl2303 usbserial_usbdebug video xfs zstd)
     grub-mkstandalone -O x86_64-efi                   \
                       --modules="${_grubmodules[*]}"  \
                       --locales="en@quot"             \
@@ -2007,8 +2026,6 @@ _build_iso_image() {
         xorriso "${xorriso_options[@]}" -as mkisofs \
             -iso-level 3 \
             -full-iso9660-filenames \
-            -joliet \
-            -joliet-long \
             -volid "${iso_label}" \
             -appid "${iso_application}" \
             -publisher "${iso_publisher}" \
@@ -2020,8 +2037,6 @@ _build_iso_image() {
         xorriso -as mkisofs \
             -iso-level 3 \
             -full-iso9660-filenames \
-            -joliet \
-            -joliet-long \
             -volid "${iso_label}" \
             -appid "${iso_application}" \
             -publisher "${iso_publisher}" \
