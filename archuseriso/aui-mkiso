@@ -42,6 +42,7 @@ image_name=""
 install_dir=""
 iso_application=""
 iso_label=""
+iso_uuid=""
 iso_name="${app_name}"
 iso_publisher=""
 iso_version=""
@@ -63,6 +64,7 @@ work_dir=""
 x64_uefi_default_bootloader=""
 zfs_support="no"
 declare -A file_permissions=()
+declare -i rm_work_dir=0
 # adapted from GRUB_EARLY_INITRD_LINUX_STOCK in https://git.savannah.gnu.org/cgit/grub.git/tree/util/grub-mkconfig.in
 readonly ucodes=('intel-uc.img' 'intel-ucode.img' 'amd-uc.img' 'amd-ucode.img' 'early_ucode.cpio' 'microcode.cpio')
 
@@ -111,7 +113,7 @@ usage: ${app_name} [options] <profile_dir>
                                         authority.
      -C <file>                          pacman configuration file.
                                         Default: '${pacman_conf}'
-     -D, --install-dir  <install_dir>   Set an install_dir. All files will by located here.
+     -D, --install-dir  <install_dir>   Set an install_dir. All files will be located here.
                                         Default: '${install_dir}'
                                         NOTE: Max 8 characters, use only [a-z0-9]
      --embed-dir <path>                 Embed directory contents in the iso image,
@@ -142,6 +144,7 @@ usage: ${app_name} [options] <profile_dir>
                                         pkg.tar.xz or pkg.tar.zst package files.
      -P <publisher>                     Set the ISO publisher
                                         Default: '${iso_publisher}'
+     -r, --remove-work-dir              Delete the working directory at the end.
      -v, --verbose                      Enable verbose output
      -w, --work-dir <work_dir>          Set the working directory
                                         Default: '${work_dir}'
@@ -589,7 +592,7 @@ _make_customize_airootfs() {
                 if [[ ! -d "${pacstrap_dir}${passwd[5]}" ]]; then
                     install -d -m 0750 -o "${passwd[2]}" -g "${passwd[3]}" -- "${pacstrap_dir}${passwd[5]}"
                 fi
-                cp -dnRT --preserve=mode,timestamps,links -- "${pacstrap_dir}/etc/skel/." "${pacstrap_dir}${passwd[5]}"
+                cp -dRT --update=none --preserve=mode,timestamps,links -- "${pacstrap_dir}/etc/skel/." "${pacstrap_dir}${passwd[5]}"
                 chown -hR -- "${passwd[2]}:${passwd[3]}" "${pacstrap_dir}${passwd[5]}"
             else
                 _msg_error "Failed to set permissions on '${pacstrap_dir}${passwd[5]}'. Outside of valid path." 1
@@ -667,22 +670,22 @@ _fat_image_efiboot_files_common_x64() {
 }
 
 _make_common_bootmode_grub_cfg() {
-    local _cfg archiso_uuid search_filename
+    local _cfg search_filename
 
     install -d -- "${work_dir}/grub"
 
-    # Precalculate the ISO's modification date in UTC, i.e. its "UUID"
-    TZ=UTC printf -v archiso_uuid '%(%F-%H-%M-%S-00)T' "$SOURCE_DATE_EPOCH"
     # Create a /boot/grub/YYYY-mm-dd-HH-MM-SS-00.uuid file on ISO 9660. GRUB will search for it to find the ISO
     # volume. This is similar to what grub-mkrescue does, except it places the file in /.disk/, but we opt to use a
     # directory that does not start with a dot to avoid it being accidentally missed when copying the ISO's contents.
-    : > "${work_dir}/grub/${archiso_uuid}.uuid"
-    search_filename="/boot/grub/${archiso_uuid}.uuid"
+    : > "${work_dir}/grub/${iso_uuid}.uuid"
+    search_filename="/boot/grub/${iso_uuid}.uuid"
+
 
     # Fill GRUB configuration files
     for _cfg in "${profile}/efiboot/grub/"*'.cfg'; do
         sed "s|%DESKTOP%|${desktop}|g;
              s|%ARCHISO_LABEL%|${iso_label}|g;
+             s|%ARCHISO_UUID%|${iso_uuid}|g;
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g;
              s|%ARCHISO_SEARCH_FILENAME%|${search_filename}|g" \
@@ -858,6 +861,7 @@ _make_bootmode_bios.syslinux.mbr() {
     for _cfg in "${profile}/syslinux/"*.cfg; do
         sed "s|%DESKTOP%|${desktop}|g;
              s|%ARCHISO_LABEL%|${iso_label}|g;
+             s|%ARCHISO_UUID%|${iso_uuid}|g;
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g"               \
             "${_cfg}" > "${isofs_dir}/boot/syslinux/${_cfg##*/}"
@@ -1013,7 +1017,7 @@ _make_common_bootmode_grub_copy_to_isofs() {
         _files_to_copy+=("${profile}/efiboot/grub/"!(*.cfg))
     fi
     install -d -m 0755 -- "${isofs_dir}/boot/grub/"
-    install -m 0644 -- "${_files_to_copy[@]}" "${isofs_dir}/boot/grub/"
+    cp -r --remove-destination -- "${_files_to_copy[@]}" "${isofs_dir}/boot/grub/"
 }
 
 _make_bootmode_uefi-ia32.grub.esp() {
@@ -1199,6 +1203,7 @@ _make_bootmode_uefi-x64.systemd-boot.esp() {
     for _conf in "${profile}/efiboot/loader/entries/"*".conf"; do
         sed "s|%DESKTOP%|${desktop}|g;
              s|%ARCHISO_LABEL%|${iso_label}|g;
+             s|%ARCHISO_UUID%|${iso_uuid}|g;
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g" \
              "${_conf}" | mcopy -i "${efibootimg}" - "::/loader/entries/${_conf##*/}"
@@ -1240,6 +1245,7 @@ _make_bootmode_uefi-x64.systemd-boot.eltorito() {
     for _conf in "${profile}/efiboot/loader/entries/"*".conf"; do
         sed "s|%DESKTOP%|${desktop}|g;
              s|%ARCHISO_LABEL%|${iso_label}|g;
+             s|%ARCHISO_UUID%|${iso_uuid}|g;
              s|%INSTALL_DIR%|${install_dir}|g;
              s|%ARCH%|${arch}|g" \
              "${_conf}" > "${isofs_dir}/loader/entries/${_conf##*/}"
@@ -1397,7 +1403,9 @@ _make_drive() {
                      "${isofs_dir}/.drive/hybrid/grub/grub.cfg"                   \
                      "${isofs_dir}/.drive/install/grub/grub.cfg"                  \
                      "${isofs_dir}/.drive/liveusb/syslinux/archiso_sys-linux.cfg" \
+                     "${isofs_dir}/.drive/liveusb/syslinux/archiso_pxe-linux.cfg" \
                      "${isofs_dir}/.drive/hybrid/syslinux/archiso_sys-linux.cfg"  \
+                     "${isofs_dir}/.drive/hybrid/syslinux/archiso_pxe-linux.cfg"  \
                      "${isofs_dir}/.drive/install/syslinux/archiso_sys-linux.cfg"; do
         if [[ -f "${drivefile}" ]]; then
             sed -i "s|%INSTALL_DIR%|${install_dir}|g;s|%DESKTOP%|${desktop}|g" "${drivefile}"
@@ -2121,9 +2129,9 @@ _umount_img() {
 }
 
 _img_bootmode_bios.syslinux.mbr() {
-    cp -rT -- "${work_dir}/iso/.drive/liveusb/syslinux/" "${work_dir}/imgp2/boot/syslinux/"
-    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/liveusb/syslinux" -type f | \
-                             sed -- "s|^${work_dir}/iso/.drive/liveusb/|boot/|") )
+    cp -rT -- "${work_dir}/iso/.drive/img/syslinux/" "${work_dir}/imgp2/boot/syslinux/"
+    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/img/syslinux" -type f | \
+                             sed -- "s|^${work_dir}/iso/.drive/img/|boot/|") )
 }
 
 _img_bootmode_uefi-ia32.grub.esp() {
@@ -2131,9 +2139,9 @@ _img_bootmode_uefi-ia32.grub.esp() {
 }
 
 _img_bootmode_uefi-x64.grub.esp() {
-    cp -rT -- "${work_dir}/iso/.drive/liveusb/grub/" "${work_dir}/imgp2/boot/grub/"
-    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/liveusb/grub" -type f | \
-                             sed -- "s|^${work_dir}/iso/.drive/liveusb/|boot/|") )
+    cp -rT -- "${work_dir}/iso/.drive/img/grub/" "${work_dir}/imgp2/boot/grub/"
+    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/img/grub" -type f | \
+                             sed -- "s|^${work_dir}/iso/.drive/img/|boot/|") )
 }
 
 _img_bootmode_uefi-x64.refind.esp() {
@@ -2143,9 +2151,9 @@ _img_bootmode_uefi-x64.refind.esp() {
 }
 
 _img_bootmode_uefi-x64.systemd-boot.esp() {
-    cp -rT -- "${work_dir}/iso/.drive/liveusb/loader/" "${work_dir}/imgp2/loader/"
-    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/liveusb/loader" -type f | \
-                             sed -- "s|^${work_dir}/iso/.drive/liveusb/||") )
+    cp -rT -- "${work_dir}/iso/.drive/img/loader/" "${work_dir}/imgp2/loader/"
+    _esp_files_settings+=( $(find "${work_dir}/iso/.drive/img/loader" -type f | \
+                             sed -- "s|^${work_dir}/iso/.drive/img/||") )
 }
 
 # Build IMG
@@ -2161,8 +2169,8 @@ _build_img_image() {
     rm -f -- "${out_dir}/${image_name}"
     _msg_info "Creating GPT disk image..."
 
-    # Read-only fs size in MiB (sfs image size +  6%)
-    _rosize=$(( $(du -bs "${isofs_dir}/${install_dir}/${arch}" | awk '{print $1}') / 1048576 * 106 / 100 ))
+    # Read-only fs size in MiB (sfs image size +  6.5%)
+    _rosize=$(( $(du -bs "${isofs_dir}/${install_dir}/${arch}" | awk '{print $1}') / 1048576 * 1065 / 1000 ))
 
     # Calculate ESP size
     _espsize=$(( $(du -bs "${isofs_dir}" | awk '{print $1}') ))
@@ -2256,7 +2264,9 @@ _build_img_image() {
 
     for _espfile in "${_esp_files_settings[@]}"; do
             if [[ -f "${work_dir}/imgp2/${_espfile}" ]]; then
-                sed -i -- "s|%ARCHISO_LABEL%|RO${iso_label}|g;
+                sed -i -- "s|%DESKTOP%|${desktop}|g;
+                           s|%INSTALL_DIR%|${install_dir}|g;
+                           s|%ARCHISO_LABEL%|RO${iso_label}|g;
                            s|%COW_LABEL%|COW${iso_label}|g;
                            s|\scow_flags=%COW_FLAGS%||g;
                            s|%ESP_LABEL%|ESP${iso_label}|g;
@@ -2460,9 +2470,14 @@ _set_overrides() {
     elif [[ -z "${quiet}" ]]; then
         quiet="y"
     fi
+    if [[ -v override_rm_work_dir ]]; then
+        rm_work_dir="${override_rm_work_dir}"
+    fi
     if [[ -v override_iso_name ]]; then
         image_name="${override_iso_name}"
     fi
+    # Precalculate the ISO's modification date in UTC, i.e. its "UUID"
+    TZ=UTC printf -v iso_uuid '%(%F-%H-%M-%S-00)T' "$SOURCE_DATE_EPOCH"
 }
 
 _export_gpg_publickey() {
@@ -2533,6 +2548,16 @@ _make_pkglist() {
     _msg_info "Done!"
 }
 
+# Create working directory
+_make_work_dir() {
+    if [[ ! -d "${work_dir}" ]]; then
+        install -d -- "${work_dir}"
+    elif (( rm_work_dir )); then
+        rm_work_dir=0
+        _msg_warning "Working directory removal requested, but '${work_dir}' already exists. It will not be removed!" 0
+    fi
+}
+
 # build the base for an ISO and/or a netboot target
 _build_iso_base() {
     local run_once_mode="base"
@@ -2543,12 +2568,8 @@ _build_iso_base() {
     pacstrap_dir="${work_dir}/${arch}/airootfs"
     isofs_dir="${work_dir}/iso"
 
-    # Write build date to file or if the file exists, read it from there
-    if [[ -e "${work_dir}/build_date" ]]; then
-        SOURCE_DATE_EPOCH="$(<"${work_dir}/build_date")"
-    else
-        printf '%s\n' "$SOURCE_DATE_EPOCH" > "${work_dir}/build_date"
-    fi
+    # Write build date to file if it does not exist already
+    [[ -e "${work_dir}/build_date" ]] || printf '%s\n' "$SOURCE_DATE_EPOCH" > "${work_dir}/build_date"
 
     _show_config
     _run_once _make_pacman_conf
@@ -2636,15 +2657,21 @@ _build() {
     for buildmode in "${buildmodes[@]}"; do
         _run_once "_build_buildmode_${buildmode}"
     done
+    if (( rm_work_dir )); then
+        _msg_info 'Removing the working directory...'
+        rm -rf -- "${work_dir:?}/"
+        _msg_info 'Done!'
+    fi
 }
 
-OPTS=$(getopt -o '?A:C:c:D:g:G:hL:l:m:N:o:P:p:vw:' \
+OPTS=$(getopt -o '?A:C:c:D:g:G:hL:l:m:N:o:P:p:rvw:' \
               -l 'addpkg:,addpkgtesting:,application:,embeddir:' \
               -l 'add-pkg:,add-pkg-testing:,build-modes:,cert:,embed-dir:' \
               -l 'gpgkey:,gpgsender:,graphics:,installdir:,label:,language:' \
               -l 'outdir:,pacman-testing-conf:,pkgdir:,publisher:' \
               -l 'install-dir:,out-dir:,pacmantestingconf:,pkg-dir:' \
               -l 'verbose,workdir:,work-dir:,zfs-support' \
+              -l 'remove-work-dir' \
               -l 'help' \
               -n "${app_name}" -- "$@")
 [[ $? -eq 0 ]] || _usage 1
@@ -2744,6 +2771,9 @@ while true; do
         '-P'|'--publisher')
             override_iso_publisher="${2}"
             shift 2 ;;
+        '-r'|'--remove-work-dir')
+            declare -i override_rm_work_dir=1
+            shift ;;
         '-v'|'--verbose')
             override_quiet="n"
             shift ;;
@@ -2772,6 +2802,13 @@ if [[ ! -d "$(realpath -- "${1}")" ]]; then
 fi
 profile="$(realpath -- "${1}")"
 
+# Read SOURCE_DATE_EPOCH from file early
+build_date_file="$(realpath -q -- "${override_work_dir:-./work}/build_date")" || :
+if [[ -f "$build_date_file" ]]; then
+    SOURCE_DATE_EPOCH="$(<"$build_date_file")"
+fi
+unset build_date_file
+
 [[ -n "${iso_version_options[*]}" ]] && _iso_version_options
 _read_profile
 _set_overrides
@@ -2782,7 +2819,7 @@ if [[ -d "${work_dir}" ]]; then
     exit 0
 else
     # Create working directory
-    install -d -- "${work_dir}"
+    _make_work_dir
 fi
 _validate_options
 if [[ "${zfs_support}" == "yes" ]]; then
