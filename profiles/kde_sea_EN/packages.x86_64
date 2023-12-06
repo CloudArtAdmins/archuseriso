@@ -8,6 +8,7 @@ archinstall
 b43-fwcutter
 base
 bind
+bolt
 broadcom-wl
 btrfs-progs
 clonezilla
@@ -28,6 +29,7 @@ ethtool
 exfatprogs
 f2fs-tools
 fatresize
+foot-terminfo
 fsarchiver
 gnu-netcat
 gpart
@@ -76,6 +78,7 @@ nvme-cli
 open-iscsi
 open-vm-tools
 openconnect
+openpgp-card-tools
 openssh
 openvpn
 partclone
@@ -94,6 +97,7 @@ rsync
 rxvt-unicode-terminfo
 screen
 sdparm
+sequoia-sq
 sg3_utils
 smartmontools
 sof-firmware
@@ -105,6 +109,7 @@ tcpdump
 terminus-font
 testdisk
 tmux
+tpm2-tools
 tpm2-tss
 udftools
 usb_modeswitch
@@ -113,6 +118,7 @@ usbutils
 vim
 virtualbox-guest-utils-nox
 vpnc
+wezterm-terminfo
 wireless-regdb
 wireless_tools
 wpa_supplicant
@@ -140,12 +146,16 @@ ffmpegthumbs
 frei0r-plugins
 gst-libav
 gwenview
+iio-sensor-proxy
 intel-media-driver
 jre-openjdk
 kate
 kcalc
 kde-gtk-config
+kde-inotify-survey
+kdeconnect
 kfind
+kio-admin
 kio-zeroconf
 konqueror
 kscreen
@@ -158,12 +168,18 @@ libva-mesa-driver
 libva-utils
 libva-vdpau-driver
 lsb-release
+maliit-keyboard
 mesa-vdpau
 network-manager-applet
-nss-mdns
+noto-fonts
+noto-fonts-cjk
 okular
 partitionmanager
 pavucontrol-qt
+phonon-qt5-vlc
+pipewire-alsa
+pipewire-jack
+pipewire-pulse
 plasma-browser-integration
 plasma-desktop
 plasma-disks
@@ -171,16 +187,15 @@ plasma-nm
 plasma-pa
 plasma-thunderbolt
 plasma-vault
+plasma-wayland-session
 plasma-workspace-wallpapers
 powerdevil
 print-manager
-pulseaudio-bluetooth
-pulseaudio-zeroconf
-samba
 sddm-kcm
 spectacle
+switcheroo-control
 vdpauinfo
-xdg-desktop-portal
+wireplumber
 xdg-desktop-portal-kde
 xdg-user-dirs
 xf86-input-evdev
@@ -237,13 +252,13 @@ kinfocenter
 kio-gdrive
 kleopatra
 #kmag
-kmail
+#kmail
 #kmousetool
 #kmouth
-knotes
+#knotes
 kolourpaint
 kompare
-kontact
+#kontact
 #konversation
 korganizer
 krdc
@@ -258,31 +273,19 @@ markdownpart
 #mesa-demos
 mesa-utils
 networkmanager-openconnect
+openpgp-card-tools
 networkmanager-openvpn
 networkmanager-pptp
 networkmanager-vpnc
+wezterm-terminfo
 numlockx
 #packagekit-qt5
 plasma-firewall
-plasma-systemmonitor 
+plasma-systemmonitor
 skanlite
 svgpart
 sweeper
 system-config-printer
-telepathy-gabble
-telepathy-haze
-telepathy-idle
-telepathy-kde-approver
-telepathy-kde-auth-handler
-telepathy-kde-call-ui
-telepathy-kde-contact-list
-telepathy-kde-contact-runner
-telepathy-kde-desktop-applets
-telepathy-kde-filetransfer-handler
-telepathy-kde-integration-module
-telepathy-kde-send-file
-telepathy-kde-text-ui
-telepathy-salut
 xf86-input-elographics
 #xf86-input-void
 #xf86-input-wacom
@@ -296,6 +299,7 @@ xorg-xvinfo
 xorg-xwayland
 xorg-xwininfo
 zanshin
+
 
 ### Browser
 ##
@@ -316,7 +320,7 @@ cups-pdf cups-pk-helper
 ### Office
 ##
 # Optional
-calligra
+#calligra
 #libreoffice-fresh hunspell-en_US
 #libreoffice-still hunspell-en_US
 
@@ -385,8 +389,6 @@ flameshot
 fzf
 htop
 iotop
-keepassxc
-keybase-gui
 kitty
 okular
 nfs-utils
@@ -396,17 +398,10 @@ torbrowser-launcher
 veracrypt
 vlc
 xz
-youtube-dl
 zsh-history-substring-search
 zsh-syntax-highlighting
 zsh-autosuggestions
 zsh-completions
-
-# Syncplay 
-syncplay
-pyside2 
-python-certifi
-python-service-identity
 
 # Added language fonts
 adobe-source-han-sans-cn-fonts
