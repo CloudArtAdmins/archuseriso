@@ -7,6 +7,7 @@ arch-install-scripts
 archinstall
 b43-fwcutter
 base
+bcachefs-tools
 bind
 bolt
 broadcom-wl
@@ -243,7 +244,7 @@ kdf
 kdialog
 #keditbookmarks
 #kfloppy
-kgamma5
+kgamma
 kget
 #kgpg
 khelpcenter
